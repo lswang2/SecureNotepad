@@ -74,6 +74,8 @@
     <string name="action_theme">Barevné téma</string>
     <string name="pref_title_direct_edit">Upravit poznámky přímo</string>
     <string name="pref_title_markdown">Podpora Markdown/HTML</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Tisknout</string>
     <string name="action_start_selection">Vybrat poznámky</string>
     <string name="action_select_all">Vybrat všechny</string>

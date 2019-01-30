@@ -10,6 +10,8 @@
 <string name="action_install">Установить</string>
 <string name="action_new">Новая заметка</string>
 <string name="action_no_thanks">Нет, спасибо</string>
+<string name="action_lock">Lock</string>
+<string name="action_unlock">Unlock</string>
 <string name="action_print">Распечатать</string>
 <string name="action_save">Сохранить</string>
 <string name="action_select_all">Выбрать все</string>
@@ -23,7 +25,7 @@
 <string name="changes_discarded">Изменения отменены</string>
 <string name="dialog_about_message">"Notepad: простое приложение для создания заметок
 
-© 2019 Braden Farmer
+2019 lswang2\n\n&#169; forked from © 2019 Braden Farmer
 App logo by Tobaloidee
 Russian translation by Vladimir Kosolapov"</string>
 <string name="dialog_about_title">О приложении</string>

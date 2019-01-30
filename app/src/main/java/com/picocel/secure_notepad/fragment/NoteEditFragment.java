@@ -18,6 +18,7 @@ package com.picocel.secure_notepad.fragment;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v4.app.Fragment;
@@ -33,7 +34,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -63,6 +67,9 @@ public class NoteEditFragment extends Fragment {
     long draftName;
     boolean isSavedNote = false;
     String contents;
+	boolean isLocked = false;
+	String password;
+	String passwordTmp;
     boolean directEdit = false;
 
     // Receiver used to close fragment when a note is deleted
@@ -361,7 +368,11 @@ public class NoteEditFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.note_edit, menu);
+		if(isLocked){
+			inflater.inflate(R.menu.note_edit_locked, menu);
+		}else{
+			inflater.inflate(R.menu.note_edit_plain, menu);
+		}
 
         if(listener.isShareIntent() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             menu.removeItem(R.id.action_export);
@@ -490,6 +501,16 @@ public class NoteEditFragment extends Fragment {
 
                 return true;
 
+			// Lock menu item
+			case R.id.action_lock:
+				enterPassword();
+				return true;
+
+			// Unlock menu item
+			case R.id.action_unlock:
+				verifyPassword();
+				return true;
+
             // Print menu item
             case R.id.action_print:
                 // Set current note contents to a String
@@ -508,11 +529,91 @@ public class NoteEditFragment extends Fragment {
         }
     }
 
+	private void enterPassword() {
+		final EditText edittext = new EditText(getContext());
+		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle("Lock this note");
+		builder.setMessage("Enter the password");
+		builder.setView(edittext);
+		builder.setPositiveButton("잠금",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+						passwordTmp = edittext.getText();
+						checkPassword();
+					}
+				});
+		builder.setNegativeButton("취소",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+					}
+				});
+        builder.show();
+	}
+
+	private void checkPassword() {
+		final EditText edittext = new EditText(getContext());
+		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle("Lock this note");
+		builder.setMessage("Enter the password again");
+		builder.setView(edittext);
+		builder.setPositiveButton("잠금",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+						if(passwordTmp.equals(edittext.getText())){
+							password = passwordTmp;
+							isLocked = true;
+							getActivity().invalidateOptionsMenu();
+						}
+					}
+				});
+		builder.setNegativeButton("취소",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+					}
+				});
+        builder.show();
+	}
+
+	private void verifyPassword() {
+		final EditText edittext = new EditText(getContext());
+		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+		builder.setTitle("Unlock this note");
+		builder.setMessage("Enter the password");
+		builder.setView(edittext);
+		builder.setPositiveButton("해제",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+						if(password.equals(edittext.getText())){
+							password = "";
+							isLocked = false;
+						}
+					}
+				});
+		builder.setNegativeButton("취소",
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,int which){
+					}
+				});
+        builder.show();
+	}
+
     private void deleteNote(String filename) {
         // Build the pathname to delete file, then perform delete operation
         File fileToDelete = new File(getActivity().getFilesDir() + File.separator + filename);
         fileToDelete.delete();
     }
+
+	private byte[] encrypt(byte[]){
+	}
 
     // Saves notes to /data/data/com.picocel.secure_notepad/files
     private void saveNote() throws IOException {

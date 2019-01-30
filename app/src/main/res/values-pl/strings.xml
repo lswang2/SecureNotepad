@@ -35,7 +35,7 @@
     <string name="cab_note_selected">notatka zaznaczona</string>
     <string name="cab_notes_selected">notatki zaznaczone</string>
     <string name="changes_discarded">Zmiany odrzucone</string>
-    <string name="dialog_about_message">Notatnik: prosta aplikacja do sporządzania notatek\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
+    <string name="dialog_about_message">Notatnik: prosta aplikacja do sporządzania notatek\n\n&#169; 2019 lswang2\n\n forked from&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
     <string name="dialog_about_title">O Notatniku</string>
     <string name="dialog_are_you_sure">Czy jesteś pewien?</string>
     <string name="dialog_delete_button_title">Usuń notatkę</string>
@@ -74,6 +74,8 @@
     <string name="action_theme">Theme</string>
     <string name="pref_title_direct_edit">Edit notes directly</string>
     <string name="pref_title_markdown">Markdown/HTML support</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Print</string>
     <string name="action_start_selection">Select notes</string>
     <string name="action_select_all">Select all</string>

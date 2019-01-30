@@ -35,7 +35,7 @@
     <string name="cab_note_selected">notitie geselecteerd</string>
     <string name="cab_notes_selected">notities geselecteerd</string>
     <string name="changes_discarded">Wijzigingen verworpen</string>
-    <string name="dialog_about_message">Notitieblok: een eenvoudige notitie-app\n\n&#169; 2019 Braden Farmer\nApp-logo door Tobaloidee</string>
+    <string name="dialog_about_message">Notitieblok: een eenvoudige notitie-app\n\n&#169; 2019 lswang2\n\n forked from&#169; 2019 Braden Farmer\nApp-logo door Tobaloidee</string>
     <string name="dialog_about_title">Over Notitieblok</string>
     <string name="dialog_are_you_sure">Weet je het zeker?</string>
     <string name="dialog_delete_button_title">Notitie verwijderen</string>
@@ -74,6 +74,8 @@
     <string name="action_theme">Thema</string>
     <string name="pref_title_direct_edit">Notities direct bewerken</string>
     <string name="pref_title_markdown">Markdown/HTML-ondersteuning</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Afdrukken</string>
     <string name="action_start_selection">Notities selecteren</string>
     <string name="action_select_all">Alles selecteren</string>

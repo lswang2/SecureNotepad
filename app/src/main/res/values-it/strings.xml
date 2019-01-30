@@ -30,13 +30,13 @@
     <string name="action_settings">Impostazioni</string>
     <string name="action_share">Condividi</string>
     <string name="action_sort_by">Ordina note per</string>
-    <string name="app_name">Notepad</string>
-    <string name="app_name_debug">Notepad (Debug)</string>
+    <string name="app_name">SecureNotepad</string>
+    <string name="app_name_debug">SecureNotepad (Debug)</string>
     <string name="cab_note_selected">nota selezionata</string>
     <string name="cab_notes_selected">note selezionate</string>
     <string name="changes_discarded">Modifiche annullate</string>
-    <string name="dialog_about_message">Notepad: una semplice app per appunti\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
-    <string name="dialog_about_title">Riguardo a Notepad</string>
+    <string name="dialog_about_message">SecureNotepad: una semplice app per appunti\n\n&#169; lswang2\n\n forked from&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
+    <string name="dialog_about_title">Riguardo a SecureNotepad</string>
     <string name="dialog_are_you_sure">Sei sicuro?</string>
     <string name="dialog_delete_button_title">Elimina nota</string>
     <string name="dialog_delete_button_title_plural">Elimina note</string>
@@ -74,6 +74,8 @@
     <string name="action_theme">Tema</string>
     <string name="pref_title_direct_edit">Modifica note direttamente</string>
     <string name="pref_title_markdown">Supporto Markdown/HTML</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Stampa</string>
     <string name="action_start_selection">Seleziona note</string>
     <string name="action_select_all">Seleziona tutte</string>

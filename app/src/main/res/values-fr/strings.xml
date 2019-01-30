@@ -35,7 +35,7 @@
     <string name="cab_note_selected">Note selectionnee</string>
     <string name="cab_notes_selected">Notes selectionnees</string>
     <string name="changes_discarded">Modifications abandonnees</string>
-    <string name="dialog_about_message">Bloc-Notes : une application de prise de notes simple\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
+    <string name="dialog_about_message">Bloc-Notes : une application de prise de notes simple\n\n&#169; 2019 lswang2\n\n forked from&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
     <string name="dialog_about_title">A propos de Bloc-Notes</string>
     <string name="dialog_are_you_sure">Etes-vous sur ?</string>
     <string name="dialog_delete_button_title">Supprimer la note</string>
@@ -74,6 +74,8 @@
     <string name="action_theme">Theme</string>
     <string name="pref_title_direct_edit">Editer directement les notes</string>
     <string name="pref_title_markdown">Surligner les liens HTML</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Imprimer</string>
     <string name="action_start_selection">Selectionner les notes</string>
     <string name="action_select_all">Selectionner tout</string>

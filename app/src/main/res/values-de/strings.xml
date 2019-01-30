@@ -72,6 +72,8 @@
     <string name="action_theme">Thema</string>
     <string name="pref_title_direct_edit">Notizen direkt editieren</string>
     <string name="pref_title_markdown">Markdown/HTML Unterstützung</string>
+    <string name="action_lock">Lock</string>
+    <string name="action_unlock">Unlock</string>
     <string name="action_print">Drucken</string>
     <string name="action_start_selection">Notizen auswählen</string>
     <string name="action_select_all">Alles auswählen</string>

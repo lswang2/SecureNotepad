@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -37,7 +38,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -50,6 +54,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -71,6 +76,8 @@ public class NoteViewFragment extends Fragment {
 
     String filename = "";
     String contentsOnLoad = "";
+	boolean isLockedOnLoad = false;
+	String passwordOnLoad = "";
     int firstLoad;
     boolean showMessage = true;
 
@@ -460,7 +467,11 @@ public class NoteViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.note_view, menu);
+		if(isLockedOnLoad){
+			inflater.inflate(R.menu.note_view_locked, menu);
+		}else{
+			inflater.inflate(R.menu.note_view_plain, menu);
+		}
     }
 
     @Override
@@ -505,6 +516,14 @@ public class NoteViewFragment extends Fragment {
 
                 return true;
 
+            case R.id.action_lock:
+                enterPassword();
+                return true;
+
+            case R.id.action_unlock:
+                verifyPassword();
+                return true;
+
             // Export menu item
             case R.id.action_export:
                 listener.exportNote(filename);
@@ -519,6 +538,80 @@ public class NoteViewFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void enterPassword() {
+        final EditText edittext = new EditText(getContext());
+        edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Lock this note");
+        builder.setMessage("Enter the password");
+        builder.setView(edittext);
+        builder.setPositiveButton("잠금",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
+                        checkPassword();
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                    }
+                });
+        builder.show();
+    }
+
+    private void checkPassword() {
+        final EditText edittext = new EditText(getContext());
+        edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Lock this note");
+        builder.setMessage("Enter the password again");
+        builder.setView(edittext);
+        builder.setPositiveButton("잠금",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
+                        isLockedOnLoad = true;
+                        getActivity().invalidateOptionsMenu();
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                    }
+                });
+        builder.show();
+    }
+
+    private void verifyPassword() {
+        final EditText edittext = new EditText(getContext());
+        edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Unlock this note");
+        builder.setMessage("Enter the password");
+        builder.setView(edittext);
+        builder.setPositiveButton("해제",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
+                        isLockedOnLoad = false;
+                    }
+                });
+        builder.setNegativeButton("취소",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int which){
+                    }
+                });
+        builder.show();
+    }
+
 
     private void deleteNote(String filename) {
         // Build the pathname to delete file, then perform delete operation
