@@ -1,5 +1,6 @@
 /* Copyright 2014 Braden Farmer
  * Copyright 2015 Sean93Park
+ * Copyright 2019 lswang2
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.activity;
+package com.picocel.secure_notepad.activity;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -40,16 +41,16 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.fragment.NoteEditFragment;
-import com.farmerbb.notepad.fragment.NoteListFragment;
-import com.farmerbb.notepad.fragment.NoteViewFragment;
-import com.farmerbb.notepad.fragment.WelcomeFragment;
-import com.farmerbb.notepad.fragment.dialog.BackButtonDialogFragment;
-import com.farmerbb.notepad.fragment.dialog.DeleteDialogFragment;
-import com.farmerbb.notepad.fragment.dialog.FirstRunDialogFragment;
-import com.farmerbb.notepad.fragment.dialog.SaveButtonDialogFragment;
-import com.farmerbb.notepad.util.WebViewInitState;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.fragment.NoteEditFragment;
+import com.picocel.secure_notepad.fragment.NoteListFragment;
+import com.picocel.secure_notepad.fragment.NoteViewFragment;
+import com.picocel.secure_notepad.fragment.WelcomeFragment;
+import com.picocel.secure_notepad.fragment.dialog.BackButtonDialogFragment;
+import com.picocel.secure_notepad.fragment.dialog.DeleteDialogFragment;
+import com.picocel.secure_notepad.fragment.dialog.FirstRunDialogFragment;
+import com.picocel.secure_notepad.fragment.dialog.SaveButtonDialogFragment;
+import com.picocel.secure_notepad.util.WebViewInitState;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -415,12 +416,12 @@ NoteViewFragment.Listener {
 
         // Send broadcasts to update UI
         Intent deleteIntent = new Intent();
-        deleteIntent.setAction("com.farmerbb.notepad.DELETE_NOTES");
+        deleteIntent.setAction("com.picocel.secure_notepad.DELETE_NOTES");
         deleteIntent.putExtra("files", filesToDelete2);
         LocalBroadcastManager.getInstance(this).sendBroadcast(deleteIntent);
 
         Intent listIntent = new Intent();
-        listIntent.setAction("com.farmerbb.notepad.LIST_NOTES");
+        listIntent.setAction("com.picocel.secure_notepad.LIST_NOTES");
         LocalBroadcastManager.getInstance(this).sendBroadcast(listIntent);
 
         // Show toast notification
@@ -501,7 +502,7 @@ NoteViewFragment.Listener {
         toast.show();
     }
 
-    // Loads note from /data/data/com.farmerbb.notepad/files
+    // Loads note from /data/data/com.picocel.secure_notepad/files
     public String loadNote(String filename) throws IOException {
 
         // Initialize StringBuilder which will contain note
@@ -618,7 +619,7 @@ NoteViewFragment.Listener {
 
                 // Send broadcast to NoteListFragment to refresh list of notes
                 Intent listNotesIntent = new Intent();
-                listNotesIntent.setAction("com.farmerbb.notepad.LIST_NOTES");
+                listNotesIntent.setAction("com.picocel.secure_notepad.LIST_NOTES");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(listNotesIntent);
             } else if(requestCode == EXPORT) {
                 try {

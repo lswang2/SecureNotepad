@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment.dialog;
+package com.picocel.secure_notepad.fragment.dialog;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -22,14 +22,14 @@ import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.R;
 
-public class FirstRunDialogFragment extends DialogFragment {
+public class DeleteDialogFragment extends DialogFragment {
 
     /* The activity that creates an instance of this fragment must
      * implement this interface in order to receive event call backs. */
     public interface Listener {
-        void onFirstRunDialogPositiveClick();
+        void onDeleteDialogPositiveClick();
     }
 
     // Use this instance of the interface to deliver action events
@@ -54,15 +54,12 @@ public class FirstRunDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.first_run)
-        .setTitle(R.string.app_name)
-        .setPositiveButton(R.string.action_close, (dialog, id) -> listener.onFirstRunDialogPositiveClick());
-
-        // Prevent the user from cancelling this particular dialog
-        setCancelable(false);
+        builder.setMessage(R.string.dialog_are_you_sure)
+        .setTitle(getArguments().getInt("dialog_title"))
+        .setPositiveButton(R.string.action_delete, (dialog, id) -> listener.onDeleteDialogPositiveClick())
+        .setNegativeButton(R.string.action_cancel, null);
 
         // Create the AlertDialog object and return it
         return builder.create();

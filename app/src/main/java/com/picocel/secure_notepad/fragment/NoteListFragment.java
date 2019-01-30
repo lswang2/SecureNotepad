@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment;
+package com.picocel.secure_notepad.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -50,14 +50,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.activity.MainActivity;
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.activity.SettingsActivity;
-import com.farmerbb.notepad.adapter.NoteListAdapter;
-import com.farmerbb.notepad.adapter.NoteListDateAdapter;
-import com.farmerbb.notepad.fragment.dialog.AboutDialogFragment;
-import com.farmerbb.notepad.util.NoteListItem;
-import com.farmerbb.notepad.util.ScrollPositions;
+import com.picocel.secure_notepad.activity.MainActivity;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.activity.SettingsActivity;
+import com.picocel.secure_notepad.adapter.NoteListAdapter;
+import com.picocel.secure_notepad.adapter.NoteListDateAdapter;
+import com.picocel.secure_notepad.fragment.dialog.AboutDialogFragment;
+import com.picocel.secure_notepad.util.NoteListItem;
+import com.picocel.secure_notepad.util.ScrollPositions;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -85,7 +85,7 @@ public class NoteListFragment extends Fragment {
         }
     }
 
-    IntentFilter filter = new IntentFilter("com.farmerbb.notepad.LIST_NOTES");
+    IntentFilter filter = new IntentFilter("com.picocel.secure_notepad.LIST_NOTES");
     ListNotesReceiver receiver = new ListNotesReceiver();
 
     /* The activity that creates an instance of this fragment must

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment;
+package com.picocel.secure_notepad.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -47,8 +47,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.activity.MainActivity;
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.activity.MainActivity;
+import com.picocel.secure_notepad.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -95,7 +95,7 @@ public class NoteEditFragment extends Fragment {
         }
     }
 
-    IntentFilter filter = new IntentFilter("com.farmerbb.notepad.DELETE_NOTES");
+    IntentFilter filter = new IntentFilter("com.picocel.secure_notepad.DELETE_NOTES");
     DeleteNotesReceiver receiver = new DeleteNotesReceiver();
 
     /* The activity that creates an instance of this fragment must
@@ -514,7 +514,7 @@ public class NoteEditFragment extends Fragment {
         fileToDelete.delete();
     }
 
-    // Saves notes to /data/data/com.farmerbb.notepad/files
+    // Saves notes to /data/data/com.picocel.secure_notepad/files
     private void saveNote() throws IOException {
         // Set current note contents to a String
         noteContents = getActivity().findViewById(R.id.editText1);
@@ -556,7 +556,7 @@ public class NoteEditFragment extends Fragment {
 
             // Send broadcast to MainActivity to refresh list of notes
             Intent listNotesIntent = new Intent();
-            listNotesIntent.setAction("com.farmerbb.notepad.LIST_NOTES");
+            listNotesIntent.setAction("com.picocel.secure_notepad.LIST_NOTES");
             LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(listNotesIntent);
         }
     }
@@ -589,11 +589,11 @@ public class NoteEditFragment extends Fragment {
         deleteNote(filename);
         showToast(R.string.note_deleted);
 
-        if(getActivity().getComponentName().getClassName().equals("com.farmerbb.notepad.activity.MainActivity")
+        if(getActivity().getComponentName().getClassName().equals("com.picocel.secure_notepad.activity.MainActivity")
                 && getActivity().findViewById(R.id.layoutMain).getTag().equals("main-layout-large")) {
             // Send broadcast to NoteListFragment to refresh list of notes
             Intent listNotesIntent = new Intent();
-            listNotesIntent.setAction("com.farmerbb.notepad.LIST_NOTES");
+            listNotesIntent.setAction("com.picocel.secure_notepad.LIST_NOTES");
             LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(listNotesIntent);
         }
 

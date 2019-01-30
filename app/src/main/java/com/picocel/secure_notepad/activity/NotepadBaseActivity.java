@@ -1,4 +1,4 @@
-package com.farmerbb.notepad.activity;
+package com.picocel.secure_notepad.activity;
 
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.R;
 
 public abstract class NotepadBaseActivity extends AppCompatActivity {
     @Override

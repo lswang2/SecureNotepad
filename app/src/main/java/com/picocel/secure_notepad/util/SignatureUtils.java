@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.util;
+package com.picocel.secure_notepad.util;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

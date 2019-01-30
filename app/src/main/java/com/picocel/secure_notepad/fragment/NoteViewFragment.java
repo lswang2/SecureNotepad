@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment;
+package com.picocel.secure_notepad.fragment;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -55,8 +55,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.fragment.dialog.FirstViewDialogFragment;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.fragment.dialog.FirstViewDialogFragment;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -99,7 +99,7 @@ public class NoteViewFragment extends Fragment {
         }
     }
 
-    IntentFilter filter = new IntentFilter("com.farmerbb.notepad.DELETE_NOTES");
+    IntentFilter filter = new IntentFilter("com.picocel.secure_notepad.DELETE_NOTES");
     DeleteNotesReceiver receiver = new DeleteNotesReceiver();
 
     /* The activity that creates an instance of this fragment must
@@ -544,7 +544,7 @@ public class NoteViewFragment extends Fragment {
         if(getActivity().findViewById(R.id.layoutMain).getTag().equals("main-layout-large")) {
             // Send broadcast to NoteListFragment to refresh list of notes
             Intent listNotesIntent = new Intent();
-            listNotesIntent.setAction("com.farmerbb.notepad.LIST_NOTES");
+            listNotesIntent.setAction("com.picocel.secure_notepad.LIST_NOTES");
             LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(listNotesIntent);
         }
 

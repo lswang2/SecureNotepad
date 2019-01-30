@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment.dialog;
+package com.picocel.secure_notepad.fragment.dialog;
 
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -22,7 +22,7 @@ import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
 
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.R;
 
 public class BackButtonDialogFragment extends DialogFragment {
 

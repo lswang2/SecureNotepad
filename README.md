@@ -49,11 +49,11 @@ Ctrl+H: Share
 [<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
       alt="Google Play"
       height="80"
-      align="middle">](https://play.google.com/store/apps/details?id=com.farmerbb.notepad)
+      align="middle">](https://play.google.com/store/apps/details?id=com.picocel.secure_notepad)
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="F-Droid"
       height="80"
-      align="middle">](https://f-droid.org/packages/com.farmerbb.notepad/)
+      align="middle">](https://f-droid.org/packages/com.picocle.secure_notepad/)
 &nbsp;&nbsp;&nbsp;[<img src="https://images-na.ssl-images-amazon.com/images/G/01/mobile-apps/devportal2/res/images/amazon-appstore-badge-english-black.png"
       alt="Amazon Appstore"
       height="55"

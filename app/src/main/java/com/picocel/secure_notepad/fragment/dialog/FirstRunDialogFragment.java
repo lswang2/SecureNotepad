@@ -13,24 +13,23 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment.dialog;
+package com.picocel.secure_notepad.fragment.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.app.Dialog;
 import android.support.v4.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.R;
 
-public class SaveButtonDialogFragment extends DialogFragment {
+public class FirstRunDialogFragment extends DialogFragment {
 
     /* The activity that creates an instance of this fragment must
      * implement this interface in order to receive event call backs. */
     public interface Listener {
-        void onSaveDialogPositiveClick();
-        void onSaveDialogNegativeClick();
+        void onFirstRunDialogPositiveClick();
     }
 
     // Use this instance of the interface to deliver action events
@@ -55,12 +54,15 @@ public class SaveButtonDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_save_changes)
-        .setTitle(R.string.dialog_save_button_title)
-        .setPositiveButton(R.string.action_save, (dialog, id) -> listener.onSaveDialogPositiveClick())
-        .setNegativeButton(R.string.action_discard, (dialog, id) -> listener.onSaveDialogNegativeClick());
+        builder.setMessage(R.string.first_run)
+        .setTitle(R.string.app_name)
+        .setPositiveButton(R.string.action_close, (dialog, id) -> listener.onFirstRunDialogPositiveClick());
+
+        // Prevent the user from cancelling this particular dialog
+        setCancelable(false);
 
         // Create the AlertDialog object and return it
         return builder.create();

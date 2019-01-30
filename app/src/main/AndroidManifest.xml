@@ -19,7 +19,7 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:tools="http://schemas.android.com/tools"
-          package="com.farmerbb.notepad"
+          package="com.picocel.secure_notepad"
           android:installLocation="auto" >
 
     <uses-feature
@@ -47,8 +47,8 @@
         android:theme="@style/Theme.Notepad"
         tools:replace="android:label" >
         <activity-alias
-            android:name="com.farmerbb.notepad.MainActivity"
-            android:targetActivity="com.farmerbb.notepad.activity.MainActivity"
+            android:name="com.picocel.secure_notepad.MainActivity"
+            android:targetActivity="com.picocel.secure_notepad.activity.MainActivity"
             android:label="${appName}">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -61,12 +61,12 @@
                 android:resource="@xml/shortcuts" />
         </activity-alias>
         <activity
-            android:name="com.farmerbb.notepad.activity.MainActivity"
+            android:name="com.picocel.secure_notepad.activity.MainActivity"
             android:exported="true"
             android:label="${appName}"
             android:launchMode="singleTop"/>
         <activity
-            android:name="com.farmerbb.notepad.activity.NoteEditActivity"
+            android:name="com.picocel.secure_notepad.activity.NoteEditActivity"
             android:label="${appName}"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -81,7 +81,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.farmerbb.notepad.activity.SettingsActivity"
+            android:name="com.picocel.secure_notepad.activity.SettingsActivity"
             android:label="@string/action_settings"
             android:theme="@style/Theme.Notepad.Dialog" >
         </activity>

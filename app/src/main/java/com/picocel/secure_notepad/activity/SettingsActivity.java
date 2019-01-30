@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.activity;
+package com.picocel.secure_notepad.activity;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +24,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 
-import com.farmerbb.notepad.R;
+import com.picocel.secure_notepad.R;
 
 public class SettingsActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener{
 

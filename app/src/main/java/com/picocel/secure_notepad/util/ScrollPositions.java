@@ -1,4 +1,4 @@
-/* Copyright 2015 Sean93Park
+/* Copyright 2018 Braden Farmer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,23 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.util;
+package com.picocel.secure_notepad.util;
 
-import java.text.Collator;
-import java.util.Comparator;
+public class ScrollPositions {
+    private static ScrollPositions instance = new ScrollPositions();
+    private int position = 0;
 
-public class NoteListItem {
-    private String note;
-    private String date;
+    private ScrollPositions() {}
 
-    public NoteListItem(String note, String date) {
-        this.note = note;
-        this.date = date;
+    public static ScrollPositions getInstance() {
+        return instance;
     }
 
-    public String getNote() {
-      return note;
+    public int getPosition() {
+        return position;
     }
 
-    public String getDate() {
-        return date;
+    public void setPosition(int position) {
+        this.position = position;
     }
-
-    public static Comparator<NoteListItem> NoteComparatorTitle = (arg1, arg2) -> Collator.getInstance().compare(arg1.getNote(), arg2.getNote());
 }

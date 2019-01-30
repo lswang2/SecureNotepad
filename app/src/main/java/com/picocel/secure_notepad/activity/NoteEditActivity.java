@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.activity;
+package com.picocel.secure_notepad.activity;
 
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -28,11 +28,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.fragment.NoteEditFragment;
-import com.farmerbb.notepad.fragment.dialog.BackButtonDialogFragment;
-import com.farmerbb.notepad.fragment.dialog.DeleteDialogFragment;
-import com.farmerbb.notepad.fragment.dialog.SaveButtonDialogFragment;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.fragment.NoteEditFragment;
+import com.picocel.secure_notepad.fragment.dialog.BackButtonDialogFragment;
+import com.picocel.secure_notepad.fragment.dialog.DeleteDialogFragment;
+import com.picocel.secure_notepad.fragment.dialog.SaveButtonDialogFragment;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

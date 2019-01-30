@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment.dialog;
+package com.picocel.secure_notepad.fragment.dialog;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -29,9 +29,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-import com.farmerbb.notepad.BuildConfig;
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.util.SignatureUtils;
+import com.picocel.secure_notepad.BuildConfig;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.util.SignatureUtils;
 
 public class AboutDialogFragment extends DialogFragment {
 
@@ -76,7 +76,7 @@ public class AboutDialogFragment extends DialogFragment {
             case PLAY_STORE:
                 url = isPlayStoreInstalled()
                     ? "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID
-                    : "https://github.com/farmerbb/Notepad/releases";
+                    : "https://github.com/lswang2/SecureNotepad/releases";
                 break;
             case AMAZON:
                 url = "https://www.amazon.com/gp/mas/dl/android?p=" + BuildConfig.APPLICATION_ID;

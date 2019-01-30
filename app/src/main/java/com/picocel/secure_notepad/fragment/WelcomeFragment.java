@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package com.farmerbb.notepad.fragment;
+package com.picocel.secure_notepad.fragment;
 
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
@@ -42,9 +42,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.farmerbb.notepad.R;
-import com.farmerbb.notepad.activity.SettingsActivity;
-import com.farmerbb.notepad.fragment.dialog.AboutDialogFragment;
+import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.activity.SettingsActivity;
+import com.picocel.secure_notepad.fragment.dialog.AboutDialogFragment;
 
 public class WelcomeFragment extends Fragment {
 
