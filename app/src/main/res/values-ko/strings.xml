@@ -31,13 +31,13 @@
     <string name="action_settings">설정</string>
     <string name="action_share">공유</string>
     <string name="action_sort_by">정렬 순서</string>
-    <string name="app_name">노트패드</string>
+    <string name="app_name">암호노트패드</string>
     <string name="app_name_debug">@string/app_name</string>
     <string name="cab_note_selected">선택됨</string>
     <string name="cab_notes_selected">선택됨</string>
     <string name="changes_discarded">변경 취소됨</string>
     <string name="dialog_about_message">Notepad: a simple note-taking app\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
-    <string name="dialog_about_title">노트패드 정보</string>
+    <string name="dialog_about_title">암호노트패드 정보</string>
     <string name="dialog_are_you_sure">노트를 삭제하시겠어요?</string>
     <string name="dialog_delete_button_title">노트 삭제</string>
     <string name="dialog_delete_button_title_plural">노트 삭제</string>
@@ -54,7 +54,7 @@
     <string name="error_loading_list">노트 목록 읽기 실패</string>
     <string name="error_loading_note">노트 읽기 실패</string>
     <string name="failed_to_save">오류: 노트 저장 실패</string>
-    <string name="first_run">노트패드입니다!\n\n새 노트를 생성하려면 + 기호를 탭 하세요</string>
+    <string name="first_run">암호노트패드입니다!\n\n새 노트를 생성하려면 + 기호를 탭 하세요</string>
     <string name="first_view">메모를 수정하려면 본문을 더블-탭 하거나 연필을 탭 하세요</string>
     <string name="import_notes">노트 가져오기</string>
     <string name="loading_external_file">외부 파일을 읽기는 지원하지 않음</string>
