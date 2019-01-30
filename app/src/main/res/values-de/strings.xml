@@ -28,13 +28,13 @@
     <string name="action_settings">Einstellungen</string>
     <string name="action_share">Teilen</string>
     <string name="action_sort_by">Notizen sortieren nach</string>
-    <string name="app_name">Notepad</string>
-    <string name="app_name_debug">Notepad (Debug)</string>
+    <string name="app_name">SecureNotepad</string>
+    <string name="app_name_debug">SecureNotepad (Debug)</string>
     <string name="cab_note_selected">ausgewählte Notiz</string>
     <string name="cab_notes_selected">ausgewählte Notizen</string>
     <string name="changes_discarded">Änderungen verworfen</string>
-    <string name="dialog_about_message">Notepad: eine einfache Anwendung für Notizen\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
-    <string name="dialog_about_title">Über Notepad</string>
+    <string name="dialog_about_message">SecureNotepad: eine einfache Anwendung für sichere Notizen\n\n&#169; 2019 lswang2\n\n forked from &#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
+    <string name="dialog_about_title">Über SecureNotepad</string>
     <string name="dialog_are_you_sure">Sind Sie sicher?</string>
     <string name="dialog_delete_button_title">Notiz löschen</string>
     <string name="dialog_delete_button_title_plural">Notizen löschen</string>
