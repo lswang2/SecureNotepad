@@ -21,6 +21,7 @@ import android.app.ActivityManager;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
@@ -57,6 +58,11 @@ import com.picocel.secure_notepad.R;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 
 public class NoteEditFragment extends Fragment {
 
@@ -541,7 +547,7 @@ public class NoteEditFragment extends Fragment {
 		builder.setPositiveButton("잠금",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int which){
-						passwordTmp = edittext.getText();
+						passwordTmp = edittext.getText().toString();
 						checkPassword();
 					}
 				});
@@ -612,8 +618,58 @@ public class NoteEditFragment extends Fragment {
         fileToDelete.delete();
     }
 
-	private byte[] encrypt(byte[]){
+    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for ( int j = 0; j < bytes.length; j++ ) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
+    public static byte[] hexToByte(String str){
+        int len = str.length();
+        byte[] data = new byte[len / 2];
+        for (int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4)
+                    + Character.digit(str.charAt(i+1), 16));
+        }
+        return data;
+    }
+
+	private String encrypt(String inStr) throws Exception{
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] theDigest = md.digest(password.getBytes());
+        SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
+
+        byte[] input = ("===SECURE_NOTEPAD_DECRYPTED_SUCCESSFULLY===\n" + inStr).getBytes();
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE,skc);
+
+        byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
+        int ctLength = cipher.update(input,0,input.length,cipherText,0);
+        ctLength += cipher.doFinal(cipherText,ctLength);
+
+        return "===SECURE_NOTEPAD_ENCRYPTED_DATA===\n" + bytesToHex(cipherText);
 	}
+
+    public class PasswordFailure extends Exception {
+        public PasswordFailure(String errorMessage) {
+            super(errorMessage);
+        }
+    }
+	private String decrypt(String inStr) throws Exception{
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        byte[] theDigest = md.digest(password.getBytes());
+        SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
+
+        Cipher dcipher = Cipher.getInstance("AES");
+        dcipher.init(Cipher.DECRYPT_MODE,skc);
+        byte[] clearByte = dcipher.doFinal(hexToByte(inStr));
+
+        return new String(clearByte);
+    }
 
     // Saves notes to /data/data/com.picocel.secure_notepad/files
     private void saveNote() throws IOException {

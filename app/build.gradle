@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId "com.picocel.secure_notepad"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 28
 
         versionCode 109
