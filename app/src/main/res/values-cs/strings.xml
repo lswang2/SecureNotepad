@@ -30,13 +30,13 @@
     <string name="action_settings">Nastavení</string>
     <string name="action_share">Sdílet</string>
     <string name="action_sort_by">Řadit dle</string>
-    <string name="app_name">Notepad</string>
-    <string name="app_name_debug">Notepad (Debug)</string>
+    <string name="app_name">SecureNotepad</string>
+    <string name="app_name_debug">SecureNotepad (Debug)</string>
     <string name="cab_note_selected">poznámka vybrána</string>
     <string name="cab_notes_selected">poznámky vybrány</string>
     <string name="changes_discarded">Změny zrušeny</string>
-    <string name="dialog_about_message">Notepad: jednoduchá apka na poznámky\n\n&#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
-    <string name="dialog_about_title">O Notepad</string>
+    <string name="dialog_about_message">SecureNotepad: jednoduchá apka na ukládání poznámky\n\n&#169; 2019 lswang2\n\nforked from &#169; 2019 Braden Farmer\nApp logo by Tobaloidee</string>
+    <string name="dialog_about_title">O SecureNotepad</string>
     <string name="dialog_are_you_sure">Jste si jistý?</string>
     <string name="dialog_delete_button_title">Smazat poznámku</string>
     <string name="dialog_delete_button_title_plural">Smazat poznámky</string>
