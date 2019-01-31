@@ -54,6 +54,7 @@ import android.widget.Toast;
 
 import com.picocel.secure_notepad.activity.MainActivity;
 import com.picocel.secure_notepad.R;
+import com.picocel.secure_notepad.util.NoteContent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,14 +69,12 @@ public class NoteEditFragment extends Fragment {
 
     private EditText noteContents;
     String filename = String.valueOf(System.currentTimeMillis());
-    String contentsOnLoad = "";
+    NoteContent contentsOnLoad;
     int length = 0;
     long draftName;
     boolean isSavedNote = false;
-    String contents;
-	boolean isLocked = false;
+    NoteContent contents;
 	String password;
-	String passwordTmp;
     boolean directEdit = false;
 
     // Receiver used to close fragment when a note is deleted
@@ -118,7 +117,7 @@ public class NoteEditFragment extends Fragment {
         void showDeleteDialog();
         void showSaveButtonDialog();
         boolean isShareIntent();
-        String loadNote(String filename) throws IOException;
+        NoteContent loadNote(String filename) throws IOException;
         String loadNoteTitle(String filename) throws IOException;
         void exportNote(String filename);
         void printNote(String contentToPrint);
@@ -231,6 +230,16 @@ public class NoteEditFragment extends Fragment {
         } catch (NullPointerException e) {
             filename = "new";
         }
+        // Get password
+        try{
+            if(!getArguments().getString("password").equals("")){
+                password = getArguments().getString("password");
+            }else{
+                password = "";
+            }
+        }catch(NullPointerException e){
+            password = "";
+        }
 
         // Load note from existing file
         if(isSavedNote) {
@@ -240,10 +249,15 @@ public class NoteEditFragment extends Fragment {
                 showToast(R.string.error_loading_note);
                 finish(null);
             }
+            if(!password.equals("")){
+                contentsOnLoad.setUnLock(password);
+            }
+
+            contents = new NoteContent(contentsOnLoad);
 
             // Set TextView contents
             length = contentsOnLoad.length();
-            noteContents.setText(contentsOnLoad);
+            noteContents.setText(contentsOnLoad.toString());
 
             if(!pref.getBoolean("direct_edit", false))
                 noteContents.setSelection(length, length);
@@ -255,6 +269,9 @@ public class NoteEditFragment extends Fragment {
 
             if(!pref.getBoolean("direct_edit", false))
                 noteContents.setSelection(length, length);
+            contents = new NoteContent(draftContents);
+        }else{
+            contents = new NoteContent("","");
         }
 
         // Show soft keyboard
@@ -271,9 +288,9 @@ public class NoteEditFragment extends Fragment {
         if(!listener.isShareIntent() && !isRemoving()) {
             // Set current note contents to a String
             noteContents = getActivity().findViewById(R.id.editText1);
-            contents = noteContents.getText().toString();
+            contents.setContent(noteContents.getText().toString());
 
-            if(!contents.equals("")) {
+            if(!contents.isEmpty()) {
                 SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
 
                 // Save filename to draft-name preference
@@ -282,7 +299,7 @@ public class NoteEditFragment extends Fragment {
                 editor.putBoolean("is-saved-note", isSavedNote);
 
                 // Write draft to SharedPreferences
-                editor.putString("draft-contents", contents);
+                editor.putString("draft-contents", contents.toString());
                 editor.apply();
 
                 // Show toast notification
@@ -316,7 +333,7 @@ public class NoteEditFragment extends Fragment {
                         finish(null);
                     }
                 } else
-                    contentsOnLoad = "";
+                    contentsOnLoad = new NoteContent("","");
 
                 // Notify the user that a draft has been restored
                 showToast(R.string.draft_restored);
@@ -374,7 +391,7 @@ public class NoteEditFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		if(isLocked){
+		if(contents!=null && contents.isLockMode){
 			inflater.inflate(R.menu.note_edit_locked, menu);
 		}else{
 			inflater.inflate(R.menu.note_edit_plain, menu);
@@ -402,16 +419,16 @@ public class NoteEditFragment extends Fragment {
             case R.id.action_save:
                 // Get current note contents from EditText
                 noteContents = getActivity().findViewById(R.id.editText1);
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
-                if(contents.equals(""))
+                if(contents.isEmpty())
                     showToast(R.string.empty_note);
                 else if(directEdit)
                     getActivity().onBackPressed();
                 else {
                     // If no changes were made since last save, switch back to NoteViewFragment
-                    if(contentsOnLoad.equals(noteContents.getText().toString())) {
+                    if(contentsOnLoad!=null && contentsOnLoad.toString().equals(noteContents.getText().toString())) {
                         Bundle bundle = new Bundle();
                         bundle.putString("filename", filename);
 
@@ -465,16 +482,16 @@ public class NoteEditFragment extends Fragment {
                 // Share menu item
             case R.id.action_share:
                 // Set current note contents to a String
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
-                if(contents.equals(""))
+                if(contents.isEmpty())
                     showToast(R.string.empty_note);
                 else {
                     // Send a share intent
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_TEXT, contents);
+                    intent.putExtra(Intent.EXTRA_TEXT, contents.toString());
                     intent.setType("text/plain");
 
                     // Verify that the intent will resolve to an activity, and send
@@ -487,7 +504,7 @@ public class NoteEditFragment extends Fragment {
             // Export menu item
             case R.id.action_export:
                 // Set current note contents to a String
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
                 if(contents.equals(""))
@@ -520,13 +537,13 @@ public class NoteEditFragment extends Fragment {
             // Print menu item
             case R.id.action_print:
                 // Set current note contents to a String
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
                 if(contents.equals(""))
                     showToast(R.string.empty_note);
                 else
-                    listener.printNote(contents);
+                    listener.printNote(contents.toString());
 
                 return true;
 
@@ -547,7 +564,7 @@ public class NoteEditFragment extends Fragment {
 		builder.setPositiveButton("잠금",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int which){
-						passwordTmp = edittext.getText().toString();
+						password = edittext.getText().toString();
 						checkPassword();
 					}
 				});
@@ -571,9 +588,8 @@ public class NoteEditFragment extends Fragment {
 		builder.setPositiveButton("잠금",
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int which){
-						if(passwordTmp.equals(edittext.getText())){
-							password = passwordTmp;
-							isLocked = true;
+						if(password.equals(edittext.getText())){
+						    contents.createLock(password);
 							getActivity().invalidateOptionsMenu();
 						}
 					}
@@ -599,8 +615,8 @@ public class NoteEditFragment extends Fragment {
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,int which){
 						if(password.equals(edittext.getText())){
-							password = "";
-							isLocked = false;
+							contents.clearLock(password);
+                            password = "";
 						}
 					}
 				});
@@ -618,64 +634,12 @@ public class NoteEditFragment extends Fragment {
         fileToDelete.delete();
     }
 
-    private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    public static String bytesToHex(byte[] bytes) {
-        char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = hexArray[v >>> 4];
-            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
-        }
-        return new String(hexChars);
-    }
-    public static byte[] hexToByte(String str){
-        int len = str.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(str.charAt(i), 16) << 4)
-                    + Character.digit(str.charAt(i+1), 16));
-        }
-        return data;
-    }
-
-	private String encrypt(String inStr) throws Exception{
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] theDigest = md.digest(password.getBytes());
-        SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
-
-        byte[] input = ("===SECURE_NOTEPAD_DECRYPTED_SUCCESSFULLY===\n" + inStr).getBytes();
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE,skc);
-
-        byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
-        int ctLength = cipher.update(input,0,input.length,cipherText,0);
-        ctLength += cipher.doFinal(cipherText,ctLength);
-
-        return "===SECURE_NOTEPAD_ENCRYPTED_DATA===\n" + bytesToHex(cipherText);
-	}
-
-    public class PasswordFailure extends Exception {
-        public PasswordFailure(String errorMessage) {
-            super(errorMessage);
-        }
-    }
-	private String decrypt(String inStr) throws Exception{
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        byte[] theDigest = md.digest(password.getBytes());
-        SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
-
-        Cipher dcipher = Cipher.getInstance("AES");
-        dcipher.init(Cipher.DECRYPT_MODE,skc);
-        byte[] clearByte = dcipher.doFinal(hexToByte(inStr));
-
-        return new String(clearByte);
-    }
 
     // Saves notes to /data/data/com.picocel.secure_notepad/files
     private void saveNote() throws IOException {
         // Set current note contents to a String
         noteContents = getActivity().findViewById(R.id.editText1);
-        contents = noteContents.getText().toString();
+        contents.setContent(noteContents.getText().toString());
 
         // Write the String to a new file with filename of current milliseconds of Unix time
         if(contents.equals("") && filename.equals("draft"))
@@ -691,7 +655,11 @@ public class NoteEditFragment extends Fragment {
 
             // Write note to disk
             FileOutputStream output = getActivity().openFileOutput(newFilename, Context.MODE_PRIVATE);
-            output.write(contents.getBytes());
+//			if(isLocked){
+//				output.write(encrypt(contents).getBytes());
+//			}else{
+				output.write(contents.toBytes());
+//			}
             output.close();
 
             // Delete old file
@@ -805,7 +773,7 @@ public class NoteEditFragment extends Fragment {
 
     public void onBackPressed(String filename) {
         // Pop back stack if no changes were made since last save
-        if(contentsOnLoad.equals(noteContents.getText().toString())) {
+        if(contentsOnLoad!=null && contentsOnLoad.toString().equals(noteContents.getText().toString())) {
             finish(filename);
         } else {
             // Finish if EditText is empty
@@ -835,10 +803,10 @@ public class NoteEditFragment extends Fragment {
                 // CTRL+S: Save
             case KeyEvent.KEYCODE_S:
                 // Set current note contents to a String
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
-                if(contents.equals(""))
+                if(contents.isEmpty())
                     showToast(R.string.empty_note);
                 else {
                     try {
@@ -877,7 +845,7 @@ public class NoteEditFragment extends Fragment {
                 // CTRL+H: Share
             case KeyEvent.KEYCODE_H:
                 // Set current note contents to a String
-                contents = noteContents.getText().toString();
+                contents.setContent(noteContents.getText().toString());
 
                 // If EditText is empty, show toast informing user to enter some text
                 if(contents.equals(""))
@@ -886,7 +854,7 @@ public class NoteEditFragment extends Fragment {
                     // Send a share intent
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, contents);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, contents.toString());
                     shareIntent.setType("text/plain");
 
                     // Verify that the intent will resolve to an activity, and send

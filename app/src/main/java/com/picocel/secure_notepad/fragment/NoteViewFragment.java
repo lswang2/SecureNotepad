@@ -62,6 +62,7 @@ import android.widget.Toast;
 
 import com.picocel.secure_notepad.R;
 import com.picocel.secure_notepad.fragment.dialog.FirstViewDialogFragment;
+import com.picocel.secure_notepad.util.NoteContent;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -75,9 +76,8 @@ public class NoteViewFragment extends Fragment {
     private MarkdownView markdownView;
 
     String filename = "";
-    String contentsOnLoad = "";
-	boolean isLockedOnLoad = false;
-	String passwordOnLoad = "";
+    NoteContent contentsOnLoad;
+    String password;
     int firstLoad;
     boolean showMessage = true;
 
@@ -113,7 +113,7 @@ public class NoteViewFragment extends Fragment {
      * implement this interface in order to receive event call backs. */
     public interface Listener {
         void showDeleteDialog();
-        String loadNote(String filename) throws IOException;
+        NoteContent loadNote(String filename) throws IOException;
         String loadNoteTitle(String filename) throws IOException;
         void exportNote(String filename);
         void printNote(String contentToPrint);
@@ -340,10 +340,10 @@ public class NoteViewFragment extends Fragment {
 
         // Set TextView contents
         if(noteContents != null)
-            noteContents.setText(contentsOnLoad);
+            noteContents.setText(contentsOnLoad.toString());
 
         if(markdownView != null)
-            markdownView.loadMarkdown(contentsOnLoad,
+            markdownView.loadMarkdown(contentsOnLoad.toString(),
                     "data:text/css;base64," + Base64.encodeToString(css.getBytes(), Base64.DEFAULT));
 
         // Show a toast message if this is the user's first time viewing a note
@@ -400,6 +400,7 @@ public class NoteViewFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 bundle.putString("filename", filename);
+                bundle.putString("password",contentsOnLoad.getPassword());
 
                 Fragment fragment = new NoteEditFragment();
                 fragment.setArguments(bundle);
@@ -467,11 +468,11 @@ public class NoteViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		if(isLockedOnLoad){
-			inflater.inflate(R.menu.note_view_locked, menu);
-		}else{
+//		if(isLockedOnLoad){
+//			inflater.inflate(R.menu.note_view_locked, menu);
+//		}else{
 			inflater.inflate(R.menu.note_view_plain, menu);
-		}
+//		}
     }
 
     @Override
@@ -486,6 +487,7 @@ public class NoteViewFragment extends Fragment {
             case R.id.action_edit:
                 Bundle bundle = new Bundle();
                 bundle.putString("filename", filename);
+                bundle.putString("password",contentsOnLoad.getPassword());
 
                 Fragment fragment = new NoteEditFragment();
                 fragment.setArguments(bundle);
@@ -507,7 +509,7 @@ public class NoteViewFragment extends Fragment {
                 // Send a share intent
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_SEND);
-                intent.putExtra(Intent.EXTRA_TEXT, contentsOnLoad);
+                intent.putExtra(Intent.EXTRA_TEXT, contentsOnLoad.toString());
                 intent.setType("text/plain");
 
                 // Verify that the intent will resolve to an activity, and send
@@ -531,7 +533,7 @@ public class NoteViewFragment extends Fragment {
 
             // Print menu item
             case R.id.action_print:
-                listener.printNote(contentsOnLoad);
+                listener.printNote(contentsOnLoad.toString());
                 return true;
 
             default:
@@ -551,7 +553,7 @@ public class NoteViewFragment extends Fragment {
         builder.setPositiveButton("잠금",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int which){
-                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
+                        password = edittext.getText().toString();
                         checkPassword();
                     }
                 });
@@ -575,9 +577,10 @@ public class NoteViewFragment extends Fragment {
         builder.setPositiveButton("잠금",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int which){
-                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
-                        isLockedOnLoad = true;
-                        getActivity().invalidateOptionsMenu();
+                        if(password.equals(edittext.getText())){
+                            contentsOnLoad.createLock(password);
+                            getActivity().invalidateOptionsMenu();
+                        }
                     }
                 });
         builder.setNegativeButton("취소",
@@ -600,8 +603,10 @@ public class NoteViewFragment extends Fragment {
         builder.setPositiveButton("해제",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,int which){
-                        Toast.makeText(getActivity(),edittext.getText().toString(), Toast.LENGTH_LONG).show();
-                        isLockedOnLoad = false;
+                        if(password.equals(edittext.getText())){
+                            contentsOnLoad.clearLock(password);
+                            password = "";
+                        }
                     }
                 });
         builder.setNegativeButton("취소",
@@ -663,6 +668,7 @@ public class NoteViewFragment extends Fragment {
                 case KeyEvent.KEYCODE_E:
                     Bundle bundle = new Bundle();
                     bundle.putString("filename", filename);
+                    bundle.putString("password",contentsOnLoad.getPassword());
 
                     Fragment fragment = new NoteEditFragment();
                     fragment.setArguments(bundle);
@@ -684,7 +690,7 @@ public class NoteViewFragment extends Fragment {
                     // Send a share intent
                     Intent shareIntent = new Intent();
                     shareIntent.setAction(Intent.ACTION_SEND);
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, contentsOnLoad);
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, contentsOnLoad.toString());
                     shareIntent.setType("text/plain");
 
                     // Verify that the intent will resolve to an activity, and send

@@ -33,6 +33,7 @@ import com.picocel.secure_notepad.fragment.NoteEditFragment;
 import com.picocel.secure_notepad.fragment.dialog.BackButtonDialogFragment;
 import com.picocel.secure_notepad.fragment.dialog.DeleteDialogFragment;
 import com.picocel.secure_notepad.fragment.dialog.SaveButtonDialogFragment;
+import com.picocel.secure_notepad.util.NoteContent;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -243,7 +244,7 @@ String external;
     }
 
     @Override
-    public String loadNote(String filename) {
+    public NoteContent loadNote(String filename) {
         return null;
     }
 

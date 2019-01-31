@@ -50,9 +50,12 @@ import com.picocel.secure_notepad.fragment.dialog.BackButtonDialogFragment;
 import com.picocel.secure_notepad.fragment.dialog.DeleteDialogFragment;
 import com.picocel.secure_notepad.fragment.dialog.FirstRunDialogFragment;
 import com.picocel.secure_notepad.fragment.dialog.SaveButtonDialogFragment;
+import com.picocel.secure_notepad.util.NoteContent;
 import com.picocel.secure_notepad.util.WebViewInitState;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -503,7 +506,7 @@ NoteViewFragment.Listener {
     }
 
     // Loads note from /data/data/com.picocel.secure_notepad/files
-    public String loadNote(String filename) throws IOException {
+    public NoteContent loadNote(String filename) throws IOException {
 
         // Initialize StringBuilder which will contain note
         StringBuilder note = new StringBuilder();
@@ -525,7 +528,9 @@ NoteViewFragment.Listener {
         // Close file on disk
         reader.close();
 
-        return(note.toString());
+        NoteContent cont = new NoteContent(note.toString());
+
+        return(cont);
     }
 
     // Loads first line of a note for display in the ListView
@@ -538,11 +543,19 @@ NoteViewFragment.Listener {
 
         // Load the file
         String line = buffer.readLine();
+        String title="NO TITLE";
+
+        JSONObject json;
+        try{
+            json = new JSONObject(line);
+            title = json.getString("title");
+        }catch(JSONException e) {
+        }
 
         // Close file on disk
         reader.close();
 
-        return(line);
+        return(title);
     }
 
     // Calculates last modified date/time of a note for display in the ListView
@@ -623,7 +636,7 @@ NoteViewFragment.Listener {
                 LocalBroadcastManager.getInstance(this).sendBroadcast(listNotesIntent);
             } else if(requestCode == EXPORT) {
                 try {
-                    saveExportedNote(loadNote(filesToExport[fileBeingExported].toString()), resultData.getData());
+                    saveExportedNote(loadNote(filesToExport[fileBeingExported].toString()).toString(), resultData.getData());
                 } catch (IOException e) {
                     successful = false;
                 }
@@ -648,7 +661,7 @@ NoteViewFragment.Listener {
                                 generateFilename(loadNoteTitle(exportFilename.toString())));
 
                         if(file != null)
-                            saveExportedNote(loadNote(exportFilename.toString()), file.getUri());
+                            saveExportedNote(loadNote(exportFilename.toString()).toString(), file.getUri());
                         else
                             successful = false;
                     } catch (IOException e) {
