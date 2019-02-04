@@ -38,6 +38,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -47,9 +48,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.picocel.secure_notepad.activity.MainActivity;
@@ -76,6 +80,7 @@ public class NoteEditFragment extends Fragment {
     NoteContent contents;
 	String password;
     boolean directEdit = false;
+    boolean toUpdate = false;
 
     // Receiver used to close fragment when a note is deleted
     public class DeleteNotesReceiver extends BroadcastReceiver {
@@ -428,9 +433,10 @@ public class NoteEditFragment extends Fragment {
                     getActivity().onBackPressed();
                 else {
                     // If no changes were made since last save, switch back to NoteViewFragment
-                    if(contentsOnLoad!=null && contentsOnLoad.toString().equals(noteContents.getText().toString())) {
+                    if(contentsOnLoad!=null && contentsOnLoad.toString().equals(noteContents.getText().toString()) && !toUpdate) {
                         Bundle bundle = new Bundle();
                         bundle.putString("filename", filename);
+                        bundle.putString("password",contents.getPassword());
 
                         Fragment fragment = new NoteViewFragment();
                         fragment.setArguments(bundle);
@@ -553,79 +559,108 @@ public class NoteEditFragment extends Fragment {
     }
 
 	private void enterPassword() {
-		final EditText edittext = new EditText(getContext());
-		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
-		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.password_input,null);
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle("Lock this note");
-		builder.setMessage("Enter the password");
-		builder.setView(edittext);
-		builder.setPositiveButton("잠금",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-						password = edittext.getText().toString();
-						checkPassword();
-					}
-				});
-		builder.setNegativeButton("취소",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-					}
-				});
-        builder.show();
-	}
+        builder.setView(view);
 
-	private void checkPassword() {
-		final EditText edittext = new EditText(getContext());
-		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
-		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        final TextView buttonOk = (TextView) view.findViewById(R.id.password_input_ok);
+        final TextView buttonCancel = (TextView) view.findViewById(R.id.password_input_cancel);
+        final EditText password1 = (EditText) view.findViewById(R.id.password_input_edit1);
+        final EditText password2 = (EditText) view.findViewById(R.id.password_input_edit2);
+        final CheckBox check = (CheckBox) view.findViewById(R.id.password_input_hide);
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle("Lock this note");
-		builder.setMessage("Enter the password again");
-		builder.setView(edittext);
-		builder.setPositiveButton("잠금",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-						if(password.equals(edittext.getText())){
-						    contents.createLock(password);
-							getActivity().invalidateOptionsMenu();
-						}
-					}
-				});
-		builder.setNegativeButton("취소",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-					}
-				});
-        builder.show();
+        check.setChecked(true);
+
+        password1.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        password2.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        password2.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        final AlertDialog dialog = builder.create();
+
+        buttonCancel.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                dialog.dismiss();
+            }
+        });
+
+        buttonOk.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                String pass = password1.getText().toString();
+                if(pass.length()>0 && pass.equals(password2.getText().toString())){
+                    password = pass;
+                    contents.createLock(pass);
+                    toUpdate = true;
+                }else{
+                    showToast(R.string.password_input_different);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        check.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(check.isChecked()){
+                    password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    password2.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }else{
+                    password1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    password2.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }
+            }
+        });
+
+        dialog.show();
 	}
 
 	private void verifyPassword() {
-		final EditText edittext = new EditText(getContext());
-		edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
-		edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.password_check,null);
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-		builder.setTitle("Unlock this note");
-		builder.setMessage("Enter the password");
-		builder.setView(edittext);
-		builder.setPositiveButton("해제",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-						if(password.equals(edittext.getText())){
-							contents.clearLock(password);
-                            password = "";
-						}
-					}
-				});
-		builder.setNegativeButton("취소",
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int which){
-					}
-				});
-        builder.show();
+        builder.setView(view);
+
+        final TextView buttonOk = (TextView) view.findViewById(R.id.password_check_ok);
+        final TextView buttonCancel = (TextView) view.findViewById(R.id.password_check_cancel);
+        final EditText password1 = (EditText) view.findViewById(R.id.password_check_edit);
+        final CheckBox check = (CheckBox) view.findViewById(R.id.password_check_hide);
+
+        check.setChecked(true);
+
+        password1.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        final AlertDialog dialog = builder.create();
+
+        buttonCancel.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                dialog.dismiss();
+            }
+        });
+
+        buttonOk.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                String pass = password1.getText().toString();
+                if(!(pass.length()>0 && contents.setUnLock(pass))){
+                    showToast(R.string.password_check_fail);
+                }
+                dialog.dismiss();
+            }
+        });
+
+        check.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(check.isChecked()){
+                    password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }else{
+                    password1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }
+            }
+        });
+
+        dialog.show();
 	}
 
     private void deleteNote(String filename) {
@@ -671,6 +706,7 @@ public class NoteEditFragment extends Fragment {
                 showToast(R.string.draft_saved);
             else if(!filename.equals("exported_note"))
                 showToast(R.string.note_saved);
+            toUpdate = false;
 
             // Old file is no more
             if(!(filename.equals("draft") || filename.equals("exported_note"))) {

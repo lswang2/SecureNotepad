@@ -528,7 +528,9 @@ NoteViewFragment.Listener {
         // Close file on disk
         reader.close();
 
-        NoteContent cont = new NoteContent(note.toString());
+
+        NoteContent cont = new NoteContent();
+        cont.parseJson(note.toString());
 
         return(cont);
     }

@@ -106,5 +106,19 @@
         <item>Large</item>
         <item>Largest</item>
     </string-array>
+    <string name="password_input_title">Enter lock password</string>
+    <string name="password_input_name1">Password</string>
+    <string name="password_input_name2">Again</string>
+    <string name="password_input_cancel">Cancel</string>
+    <string name="password_input_ok">Lock</string>
+    <string name="password_input_different">Password differs</string>
+    <string name="password_input_hide">Hide password</string>
+    <string name="password_check_title">Enter lock password</string>
+    <string name="password_check_name">Password</string>
+    <string name="password_check_cancel">Cancel</string>
+    <string name="password_check_ok">Lock</string>
+    <string name="password_check_hide">Hide password</string>
+    <string name="password_check_fail">Password Fail</string>
+    <string name="password_check_required">Locked contents, password required</string>
 
 </resources>

@@ -5,8 +5,10 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.spec.AlgorithmParameterSpec;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class NoteContent {
@@ -14,8 +16,19 @@ public class NoteContent {
     String content;
     String cipherContent;
     String password= "";
-    boolean isLocked = false;
+    public boolean isLocked = false;
     public boolean isLockMode = false;
+    public static byte[] ivBytes = {
+            0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00
+    };
+
+    public NoteContent(){
+        title = "";
+        content = "";
+    }
 
     public NoteContent(String newTitle,String newContent){
         title = newTitle;
@@ -74,15 +87,7 @@ public class NoteContent {
     }
 
     public byte[] toBytes(){
-        String rdata;
-        if(!isLockMode){
-            rdata = content;
-        }else if(!isLocked){
-            rdata = cipherContent;
-        }else{
-            setLock();
-            rdata = cipherContent;
-        }
+        String rdata = makeJson();
         return rdata.getBytes(StandardCharsets.UTF_8);
     }
 
@@ -99,6 +104,9 @@ public class NoteContent {
                 String contPackString = contPack.toString();
                 try{
                     cipher = encrypt(contPackString);
+                    // test
+                    String rev = decrypt(cipher);
+
                     success = true;
                 }catch(Exception e){
                     cipher = content;
@@ -186,7 +194,7 @@ public class NoteContent {
             try{
                 json = new JSONObject(rev);
                 String result = json.getString("result");
-                String newContent = json.getString("conent");
+                String newContent = json.getString("content");
                 if(result.equals("success")){
                     content = newContent;
                     password = newPassword;
@@ -246,16 +254,17 @@ public class NoteContent {
     private String encrypt(String inStr, String pass) throws Exception{
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] theDigest = md.digest(pass.getBytes(StandardCharsets.UTF_8));
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivBytes);
         SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
 
         byte[] input = inStr.getBytes(StandardCharsets.UTF_8);
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE,skc);
+        cipher.init(Cipher.ENCRYPT_MODE,skc,ivSpec);
 
-        byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
-        int ctLength = cipher.update(input,0,input.length,cipherText,0);
-        ctLength += cipher.doFinal(cipherText,ctLength);
-
+//        byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
+//        int ctLength = cipher.update(input,0,input.length,cipherText,0);
+//        ctLength += cipher.doFinal(cipherText,ctLength);
+        byte[] cipherText = cipher.doFinal(input);
         return bytesToHex(cipherText);
     }
 
@@ -271,13 +280,17 @@ public class NoteContent {
     private String decrypt(String inStr,String pass) throws Exception{
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] theDigest = md.digest(pass.getBytes(StandardCharsets.UTF_8));
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(ivBytes);
         SecretKeySpec skc = new SecretKeySpec(theDigest,"AES");
 
-        Cipher dcipher = Cipher.getInstance("AES");
-        dcipher.init(Cipher.DECRYPT_MODE,skc);
-        byte[] clearByte = dcipher.doFinal(hexToBytes(inStr));
+        byte[] inBytes = hexToBytes(inStr);
+        Cipher dcipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        dcipher.init(Cipher.DECRYPT_MODE,skc,ivSpec);
+        byte[] clearByte = dcipher.doFinal(inBytes);
 
         return new String(clearByte,StandardCharsets.UTF_8);
     }
+
+
 
 }

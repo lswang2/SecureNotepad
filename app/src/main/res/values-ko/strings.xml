@@ -107,5 +107,19 @@
         <item>Large</item>
         <item>Largest</item>
     </string-array>
+    <string name="password_input_title">잠금 암호를 입력하세요</string>
+    <string name="password_input_name1">암호 입력</string>
+    <string name="password_input_name2">다시 입력</string>
+    <string name="password_input_cancel">취소</string>
+    <string name="password_input_ok">잠금</string>
+    <string name="password_input_different">패스워드 서로 다릅니다</string>
+    <string name="password_input_hide">패스워드 감추기</string>
+    <string name="password_check_title">해제 암호를 입력하세요</string>
+    <string name="password_check_name">암호 입력</string>
+    <string name="password_check_cancel">취소</string>
+    <string name="password_check_ok">해제</string>
+    <string name="password_check_hide">패스워드 감추기</string>
+    <string name="password_check_fail">암호가 틀렸습니다</string>
+    <string name="password_check_required">잠긴 문서입니다. 암호를 입력하세요</string>
 
 </resources>

@@ -41,6 +41,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
+import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Base64;
 import android.view.GestureDetector;
@@ -54,6 +55,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -74,12 +76,14 @@ import us.feras.mdv.MarkdownView;
 public class NoteViewFragment extends Fragment {
 
     private MarkdownView markdownView;
+    private TextView noteContents;
 
     String filename = "";
     NoteContent contentsOnLoad;
-    String password;
+    String password = "";
     int firstLoad;
     boolean showMessage = true;
+    boolean forwardToEdit = false;
 
     // Receiver used to close fragment when a note is deleted
     public class DeleteNotesReceiver extends BroadcastReceiver {
@@ -139,12 +143,21 @@ public class NoteViewFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle saveInstanceState) {
+        saveInstanceState.putString("password",password);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         SharedPreferences pref = getActivity().getSharedPreferences(getActivity().getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        return inflater.inflate(
+        View v =  inflater.inflate(
                 pref.getBoolean("markdown", false) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
                         ? R.layout.fragment_note_view_md
                         : R.layout.fragment_note_view, container, false);
+        if(savedInstanceState!=null){
+            password = savedInstanceState.getString("password");
+        }
+        return v;
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -194,7 +207,7 @@ public class NoteViewFragment extends Fragment {
         }
 
         // Set up content view
-        TextView noteContents = getActivity().findViewById(R.id.textView);
+        noteContents = getActivity().findViewById(R.id.textView);
         markdownView = getActivity().findViewById(R.id.markdownView);
 
         // Apply theme
@@ -337,6 +350,9 @@ public class NoteViewFragment extends Fragment {
                     .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                     .commit();
         }
+        if(contentsOnLoad.isLockMode && contentsOnLoad.isLocked && password.length()>0){
+            contentsOnLoad.setUnLock(password);
+        }
 
         // Set TextView contents
         if(noteContents != null)
@@ -441,6 +457,13 @@ public class NoteViewFragment extends Fragment {
                 detector.onTouchEvent(event);
                 return false;
             });
+        if(contentsOnLoad!=null && contentsOnLoad.isLockMode && contentsOnLoad.isLocked) {
+			if(password.length()>0){
+				contentsOnLoad.setUnLock(password);
+			}else{
+				verifyPassword();
+			}
+        }
     }
 
     // Register and unregister DeleteNotesReceiver
@@ -468,11 +491,7 @@ public class NoteViewFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//		if(isLockedOnLoad){
-//			inflater.inflate(R.menu.note_view_locked, menu);
-//		}else{
-			inflater.inflate(R.menu.note_view_plain, menu);
-//		}
+		inflater.inflate(R.menu.note_view, menu);
     }
 
     @Override
@@ -485,18 +504,13 @@ public class NoteViewFragment extends Fragment {
 
                 // Edit button
             case R.id.action_edit:
-                Bundle bundle = new Bundle();
-                bundle.putString("filename", filename);
-                bundle.putString("password",contentsOnLoad.getPassword());
-
-                Fragment fragment = new NoteEditFragment();
-                fragment.setArguments(bundle);
-
-                getFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.noteViewEdit, fragment, "NoteEditFragment")
-                        .commit();
-
+                if(contentsOnLoad!=null && contentsOnLoad.isLocked) {
+                    showToast(R.string.password_check_required);
+                    forwardToEdit = true;
+                    verifyPassword();
+                }else{
+                    callNoteEdit();
+                }
                 return true;
 
                 // Delete button
@@ -518,13 +532,9 @@ public class NoteViewFragment extends Fragment {
 
                 return true;
 
-            case R.id.action_lock:
-                enterPassword();
-                return true;
-
-            case R.id.action_unlock:
-                verifyPassword();
-                return true;
+//            case R.id.action_unlock:
+//                verifyPassword();
+//                return true;
 
             // Export menu item
             case R.id.action_export:
@@ -541,28 +551,18 @@ public class NoteViewFragment extends Fragment {
         }
     }
 
-    private void enterPassword() {
-        final EditText edittext = new EditText(getContext());
-        edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
-        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
+    private void callNoteEdit(){
+        Bundle bundle = new Bundle();
+        bundle.putString("filename", filename);
+        bundle.putString("password",contentsOnLoad.getPassword());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Lock this note");
-        builder.setMessage("Enter the password");
-        builder.setView(edittext);
-        builder.setPositiveButton("잠금",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which){
-                        password = edittext.getText().toString();
-                        checkPassword();
-                    }
-                });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which){
-                    }
-                });
-        builder.show();
+        Fragment fragment = new NoteEditFragment();
+        fragment.setArguments(bundle);
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.noteViewEdit, fragment, "NoteEditFragment")
+                .commit();
     }
 
     private void checkPassword() {
@@ -592,29 +592,59 @@ public class NoteViewFragment extends Fragment {
     }
 
     private void verifyPassword() {
-        final EditText edittext = new EditText(getContext());
-        edittext.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
-        edittext.setTransformationMethod(PasswordTransformationMethod.getInstance());
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Unlock this note");
-        builder.setMessage("Enter the password");
-        builder.setView(edittext);
-        builder.setPositiveButton("해제",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which){
-                        if(password.equals(edittext.getText())){
-                            contentsOnLoad.clearLock(password);
-                            password = "";
-                        }
-                    }
-                });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog,int which){
-                    }
-                });
-        builder.show();
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.password_check,null);
+
+        builder.setView(view);
+
+        final TextView buttonOk = (TextView) view.findViewById(R.id.password_check_ok);
+        final TextView buttonCancel = (TextView) view.findViewById(R.id.password_check_cancel);
+        final EditText password1 = (EditText) view.findViewById(R.id.password_check_edit);
+        final CheckBox check = (CheckBox) view.findViewById(R.id.password_check_hide);
+
+        check.setChecked(true);
+
+        password1.setInputType( InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD );
+        password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+
+        final AlertDialog dialog = builder.create();
+
+        buttonCancel.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                dialog.dismiss();
+            }
+        });
+
+        buttonOk.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                String pass = password1.getText().toString();
+                if(!(pass.length()>0 && contentsOnLoad.setUnLock(pass))){
+                    showToast(R.string.password_check_fail);
+                }else{
+                    password = pass;
+                }
+                if(noteContents != null)
+                    noteContents.setText(contentsOnLoad.toString());
+                if(forwardToEdit){
+                    forwardToEdit = false;
+                    callNoteEdit();
+                }
+                dialog.dismiss();
+            }
+        });
+
+        check.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                if(check.isChecked()){
+                    password1.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }else{
+                    password1.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                }
+            }
+        });
+
+        dialog.show();
     }
 
 

@@ -35,13 +35,6 @@
         android:orderInCategory="100"
         app:showAsAction="never"
         android:title="@string/action_share"/>
-    <!-- Decrypt button -->
-    <item
-        android:id="@+id/action_lock"
-        android:icon="@drawable/ic_action_lock"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/action_lock"/>
     <!-- Export button -->
     <item
         android:id="@+id/action_export"
